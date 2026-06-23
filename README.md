@@ -173,3 +173,13 @@ The deeper issue is that with only 49 rant examples, the model had limited signa
 **2. Failure pattern analysis:** After fine-tuning, I pasted all 7 wrong predictions into Claude and asked it to identify common patterns. Claude identified two themes: (1) the model struggles with posts where tone and content point in opposite directions, and (2) low-confidence predictions (around 0.50) account for most errors. I verified both patterns by re-reading the examples and confirmed them — 5 of the 7 wrong predictions had confidence at or below 0.51, and most involved a mismatch between the post's tone and its actual substance.
 
 **3. Label design (stress-testing):** I asked Claude to generate 10 posts that sit at the boundary between insight and rant. Several of the generated posts I couldn't classify cleanly, which led me to write the explicit decision rule: "could you pull one sentence out and use it as advice? If yes → insight." This rule was directly prompted by the stress-testing exercise.
+
+## Confidence Calibration
+
+| Confidence Range | Count | Accuracy |
+|---|---|---|
+| 0.50 – 0.60 | 29 | 0.62 |
+
+All 29 test predictions fell within the 0.50–0.60 confidence range, meaning the model was never highly confident about any prediction. This is consistent with the class imbalance problem — the model learned a weak decision boundary rather than a strong one, and its confidence scores reflect that uncertainty.
+
+With only one confidence bucket, meaningful calibration analysis isn't possible. A well-calibrated model would show higher accuracy in higher confidence buckets (e.g., 90% confidence → 90% accuracy). Here, the model's effective confidence ceiling of ~0.60 suggests it never fully committed to either label, which explains the 0.759 overall accuracy. A larger, more balanced dataset would likely produce more confident and better-calibrated predictions.
